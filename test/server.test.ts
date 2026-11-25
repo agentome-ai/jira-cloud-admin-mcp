@@ -190,6 +190,21 @@ describe('the tools', () => {
     expect(query.json().error.message).toBe('createPermissionGrant has no query parameter jql');
   });
 
+  it('refuse a path parameter of dots, which the URL parser would resolve to another endpoint', async () => {
+    const jira = fakeJira();
+    const { call } = await connect(jira.fetchImpl);
+    for (const schemeId of ['..', '.', '...']) {
+      const refused = await call('change_permissions', {
+        operation: 'createPermissionGrant',
+        pathParams: { schemeId },
+        body: {},
+        reason: 'test',
+      });
+      expect(refused.json().error).toMatchObject({ kind: 'invalid_arguments' });
+    }
+    expect(jira.seen).toHaveLength(0);
+  });
+
   it('change Automation rules at the gateway, by the site’s cloud id, asked once', async () => {
     const jira = fakeJira();
     const { call } = await connect(jira.fetchImpl);

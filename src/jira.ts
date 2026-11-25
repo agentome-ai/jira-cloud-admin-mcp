@@ -77,9 +77,25 @@ export function pathOf(op: Operation, pathParams: Args['pathParams'] = {}): stri
         `${op.id} needs the path parameter ${name}`,
         `Its path is ${op.path}.`,
       );
-    // One segment: a value cannot climb to another endpoint with ../ or add a query.
+    // One segment: encoded, a value adds no segment or query. A segment of dots alone is
+    // resolved by the URL parser as . or .., which would reach another endpoint.
+    if (/^\.+$/.test(String(value)))
+      throw new JiraError(
+        'invalid_arguments',
+        `${name} cannot be ${String(value)}`,
+        'Give the id or key of the item.',
+      );
     return encodeURIComponent(String(value));
   });
+}
+
+/** The operation's path as a pattern its URL must match, each parameter one segment. */
+function pathPattern(prefix: string, op: Operation): RegExp {
+  const escaped = op.path
+    .split(/\{[^}]+\}/)
+    .map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+    .join('[^/]+');
+  return new RegExp(`^${prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}${escaped}$`);
 }
 
 function queryOf(op: Operation, query: Args['query'] = {}): string {
@@ -165,11 +181,19 @@ export class JiraClient {
         'Describe the operation to see the body it takes.',
       );
     const path = pathOf(op, args.pathParams) + queryOf(op, args.query);
-    const base =
-      op.api === 'automation'
-        ? `https://api.atlassian.com/automation/public/jira/${await this.cloudId(credentials)}`
-        : `https://${credentials.site}`;
-    const response = await this.send(base + path, credentials, {
+    const host = op.api === 'automation' ? 'api.atlassian.com' : credentials.site;
+    const prefix =
+      op.api === 'automation' ? `/automation/public/jira/${await this.cloudId(credentials)}` : '';
+    // Checked as the URL parser reads it, after it resolved any dot segment: the request goes to
+    // the operation's own endpoint on its own host, or nowhere. The credentials go with it.
+    const url = new URL(`https://${host}${prefix}${path}`);
+    if (url.host !== host || !pathPattern(prefix, op).test(url.pathname))
+      throw new JiraError(
+        'invalid_arguments',
+        `The arguments of ${op.id} lead away from its endpoint ${op.path}`,
+        'Give each path parameter as an id or key.',
+      );
+    const response = await this.send(url.href, credentials, {
       method: op.method,
       ...(args.body !== undefined && op.method !== 'GET' && { body: JSON.stringify(args.body) }),
     });
