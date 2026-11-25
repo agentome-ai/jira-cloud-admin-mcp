@@ -1,0 +1,57 @@
+{
+  "name": "jira-cloud-admin-mcp",
+  "version": "0.1.0",
+  "description": "An MCP server for Jira Cloud administration: projects, fields, screens, workflows, schemes, permissions and Automation rules, with every change a tool of its own area.",
+  "license": "MIT",
+  "homepage": "https://github.com/agentome-ai/jira-cloud-admin-mcp#readme",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "jira",
+    "jira-cloud",
+    "jira-admin",
+    "jira-automation",
+    "atlassian",
+    "ai-agents",
+    "claude-code",
+    "codex",
+    "agentome"
+  ],
+  "author": {
+    "name": "Agentome",
+    "email": "hello@agentome.ai",
+    "url": "https://agentome.ai"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agentome-ai/jira-cloud-admin-mcp.git"
+  },
+  "bugs": "https://github.com/agentome-ai/jira-cloud-admin-mcp/issues",
+  "type": "module",
+  "bin": {
+    "jira-cloud-admin-mcp": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "skills"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json && chmod +x dist/cli.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "prepublishOnly": "npm run typecheck && npm test && npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.7",
+    "typescript": "6.0.3",
+    "vite": "8.3.4",
+    "vitest": "5.0.5"
+  }
+}

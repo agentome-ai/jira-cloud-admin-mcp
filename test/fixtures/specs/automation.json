@@ -1,0 +1,114 @@
+{
+ "info": {
+  "version": "1.1"
+ },
+ "paths": {
+  "/rest/v1/rule/summary": {
+   "post": {
+    "operationId": "searchRuleSummaries",
+    "summary": "Search for rule summaries",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object"
+       }
+      }
+     }
+    }
+   }
+  },
+  "/rest/v1/rule/{ruleUuid}/state": {
+   "put": {
+    "operationId": "updateRuleState",
+    "summary": "Enable or disable a rule",
+    "parameters": [
+     {
+      "name": "ruleUuid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "value": {
+          "type": "string",
+          "enum": [
+           "ENABLED",
+           "DISABLED"
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/rest/v1/getFields": {
+   "get": {
+    "operationId": "getFields",
+    "summary": "A clash of ids, for the test"
+   }
+  },
+  "/rest/v1/rule/{ruleUuid}/rule-scope": {
+   "put": {
+    "operationId": "updateRuleScope",
+    "summary": "Update rule scope",
+    "parameters": [
+     {
+      "name": "ruleUuid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/RuleScopeUpdateRequest"
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "schemas": {
+   "RuleScopeUpdateRequest": {
+    "type": "object",
+    "properties": {
+     "ruleScopeARIs": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/Search/properties/scope"
+      }
+     }
+    }
+   },
+   "Search": {
+    "type": "object",
+    "properties": {
+     "scope": {
+      "type": "string",
+      "title": "ARI",
+      "example": "ari:cloud:jira:x:project/10001"
+     }
+    }
+   }
+  }
+ }
+}

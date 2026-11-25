@@ -1,0 +1,192 @@
+{
+ "info": {
+  "version": "test-1"
+ },
+ "paths": {
+  "/rest/api/3/myself": {
+   "get": {
+    "operationId": "getCurrentUser",
+    "summary": "Get current user",
+    "tags": [
+     "Myself"
+    ]
+   }
+  },
+  "/rest/api/3/mypermissions": {
+   "get": {
+    "operationId": "getMyPermissions",
+    "summary": "Get my permissions",
+    "tags": [
+     "Permissions"
+    ],
+    "parameters": [
+     {
+      "name": "permissions",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ]
+   }
+  },
+  "/rest/api/3/field": {
+   "get": {
+    "operationId": "getFields",
+    "summary": "Get fields",
+    "tags": [
+     "Issue fields"
+    ]
+   },
+   "post": {
+    "operationId": "createCustomField",
+    "summary": "Create custom field",
+    "tags": [
+     "Issue fields"
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/CustomFieldDefinitionJsonBean"
+       }
+      }
+     }
+    }
+   }
+  },
+  "/rest/api/3/permissionscheme/{schemeId}/permission": {
+   "parameters": [
+    {
+     "name": "schemeId",
+     "in": "path",
+     "required": true,
+     "schema": {
+      "type": "string"
+     }
+    }
+   ],
+   "post": {
+    "operationId": "createPermissionGrant",
+    "summary": "Create permission grant",
+    "tags": [
+     "Permission schemes"
+    ],
+    "parameters": [
+     {
+      "name": "expand",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object"
+       }
+      }
+     }
+    }
+   }
+  },
+  "/rest/api/3/search/jql": {
+   "post": {
+    "operationId": "searchAndReconsileIssuesUsingJqlPost",
+    "summary": "Search for issues using JQL",
+    "tags": [
+     "Issue search"
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object"
+       }
+      }
+     }
+    }
+   }
+  },
+  "/rest/api/3/issue/{issueIdOrKey}": {
+   "delete": {
+    "operationId": "deleteIssue",
+    "summary": "Delete issue",
+    "tags": [
+     "Issues"
+    ],
+    "parameters": [
+     {
+      "name": "issueIdOrKey",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ]
+   }
+  },
+  "/rest/api/3/group": {
+   "get": {
+    "operationId": "getGroup",
+    "summary": "Get group",
+    "tags": [
+     "Groups"
+    ],
+    "deprecated": true,
+    "parameters": [
+     {
+      "name": "groupname",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ]
+   }
+  }
+ },
+ "components": {
+  "schemas": {
+   "CustomFieldDefinitionJsonBean": {
+    "type": "object",
+    "required": [
+     "name",
+     "type"
+    ],
+    "properties": {
+     "name": {
+      "type": "string",
+      "description": "The name of the custom field"
+     },
+     "type": {
+      "type": "string"
+     },
+     "searcherKey": {
+      "type": "string"
+     },
+     "context": {
+      "$ref": "#/components/schemas/Context"
+     }
+    }
+   },
+   "Context": {
+    "type": "object",
+    "properties": {
+     "name": {
+      "type": "string"
+     }
+    }
+   }
+  }
+ }
+}
